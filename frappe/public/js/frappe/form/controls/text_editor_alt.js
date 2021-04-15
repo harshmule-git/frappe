@@ -1,0 +1,103 @@
+// import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document";
+
+frappe.ui.form.ControlTextEditorAlt = frappe.ui.form.ControlCode.extend({
+	make_wrapper() {
+		this._super();
+		this.$wrapper.find(".like-disabled-input").addClass('ck-editor');
+	},
+
+	make_input() {
+		this.has_input = true;
+		this.make_ckeditor();
+	},
+
+	make_ckeditor() {
+		if (this.ckeditor) return;
+		this.ckeditor_container = $('<div class="ckeditor">').appendTo(this.input_area);
+		this.ckeditor_toolbar = $('<div class="ckeditor-toolbar">').appendTo(this.ckeditor_container);
+		this.ckeditor_content = $('<div class="ckeditor-content">').appendTo(this.ckeditor_container);
+
+		this.ckeditor = null;
+		DecoupledEditor
+			.create( this.ckeditor_content[0], this.get_ckeditor_options() )
+			.then( editor => {
+				this.ckeditor = editor;
+				this.ckeditor_toolbar.append(editor.ui.view.toolbar.element);
+				this.bind_events();
+			} )
+			.catch( error => { console.error(error) } );
+	},
+
+	bind_events() {
+		this.ckeditor.model.document.on('change:data', frappe.utils.debounce((delta, oldDelta, source) => {
+			if (!this.is_ckeditor_dirty(source)) return;
+
+			const input_value = this.get_input_value();
+			this.parse_validate_and_set_in_model(input_value);
+		}, 300));
+	},
+
+	is_ckeditor_dirty(source) {
+		if (source === 'api') return false;
+		let input_value = this.get_input_value();
+		return this.value !== input_value;
+	},
+
+	get_ckeditor_options() {
+		// Set default toolbar options as per Decoupled Editor
+		return {
+			toolbar: {
+				items: [
+					"heading", "|",
+					"fontfamily", "fontsize", "fontColor", "fontBackgroundColor", "|",
+					"bold", "italic", "underline", "strikethrough", "|",
+					"alignment", "|", "numberedList", "bulletedList", "|",
+					"outdent", "indent", "|",
+					"link", "blockquote", "uploadImage", "insertTable", "mediaEmbed", "|",
+					"undo", "redo"
+				]
+			},
+			image: {
+				styles: ["full", "alignLeft", "alignRight"],
+				toolbar: ["imageStyle:alignLeft", "imageStyle:full", "imageStyle:alignRight", "|", "imageTextAlternative"]
+			},
+			table: {
+				contentToolbar: ["tableColumn", "tableRow", "mergeTableCells"]
+			},
+			language: "en"
+		};
+	},
+
+	parse(value) {
+		if (value == null) {
+			value = "";
+		}
+		return frappe.dom.remove_script_and_style(value);
+	},
+
+	set_formatted_input(value) {
+		if (!this.ckeditor) {
+			return setTimeout(() => {
+				this.ckeditor && this.ckeditor.setData(value);
+			});
+		};
+		if (value === this.get_input_value()) return;
+		if (!value) {
+			// clear contents for falsy values like '', undefined or null
+			this.ckeditor.setData('');
+			return;
+		}
+		this.ckeditor.setData(value);
+	},
+
+	get_input_value() {
+		let value = this.ckeditor ? this.ckeditor.getData() : '';
+		// hack to retain space sequence.
+		value = value.replace(/(\s)(\s)/g, ' &nbsp;');
+		return value;
+	},
+
+	set_focus() {
+		this.ckeditor.focus()
+	}
+});

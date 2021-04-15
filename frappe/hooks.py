@@ -36,7 +36,7 @@ app_include_js = [
 	"assets/js/form.min.js",
 	"assets/js/control.min.js",
 	"assets/js/report.min.js",
-	"https://cdn.ckeditor.com/ckeditor5/27.0.0/decoupled-document/ckeditor.js"
+	"assets/frappe/js/lib/ckeditor.js"
 ]
 app_include_css = [
 	"assets/css/desk.min.css",
@@ -48,7 +48,7 @@ app_include_css = [
 
 web_include_js = [
 	"website_script.js",
-	"https://cdn.ckeditor.com/ckeditor5/27.0.0/decoupled-document/ckeditor.js"
+	"assets/frappe/js/lib/ckeditor.js"
 ]
 
 web_include_css = []
