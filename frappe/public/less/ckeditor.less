@@ -6,10 +6,11 @@
 }
 
 .ck-toolbar {
+	border: 1px solid @border-color !important;
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
-	border-bottom-right-radius: none !important;
+	border-radius: 0 !important;
 	border-color: @border-color !important;
 	background-color: @panel-bg !important;
 }
@@ -31,4 +32,8 @@
 
 .ckeditor-content > p {
 	margin-bottom: 0 !important;
+}
+
+.ck.ck-list__item .ck-button.ck-on {
+	background: @brand-primary !important;
 }
