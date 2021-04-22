@@ -1,4 +1,4 @@
-// import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document";
+import Adapter from "./ckeditor-plugins/Base64UploadAdapter";
 
 frappe.ui.form.ControlTextEditorAlt = frappe.ui.form.ControlCode.extend({
 	make_wrapper() {
@@ -18,8 +18,9 @@ frappe.ui.form.ControlTextEditorAlt = frappe.ui.form.ControlCode.extend({
 		this.ckeditor_content = $('<div class="ckeditor-content">').appendTo(this.ckeditor_container);
 
 		this.ckeditor = null;
+		this.set_ckeditor_options();
 		DecoupledEditor
-			.create( this.ckeditor_content[0], this.get_ckeditor_options() )
+			.create( this.ckeditor_content[0] )
 			.then( editor => {
 				this.ckeditor = editor;
 				this.ckeditor_toolbar.append(editor.ui.view.toolbar.element);
@@ -35,6 +36,8 @@ frappe.ui.form.ControlTextEditorAlt = frappe.ui.form.ControlCode.extend({
 			const input_value = this.get_input_value();
 			this.parse_validate_and_set_in_model(input_value);
 		}, 300));
+
+		this.ckeditor.plugins.get("FileRepository").createUploadAdapter = loader => new Adapter(loader);
 	},
 
 	is_ckeditor_dirty(source) {
@@ -43,17 +46,18 @@ frappe.ui.form.ControlTextEditorAlt = frappe.ui.form.ControlCode.extend({
 		return this.value !== input_value;
 	},
 
-	get_ckeditor_options() {
+	set_ckeditor_options() {
 		// Set default toolbar options as per Decoupled Editor
-		return {
+		DecoupledEditor.defaultConfig = {
 			toolbar: {
 				items: [
 					"heading", "|",
 					"fontfamily", "fontsize", "fontColor", "fontBackgroundColor", "|",
 					"bold", "italic", "underline", "strikethrough", "|",
 					"alignment", "|", "numberedList", "bulletedList", "|",
+					"insertTable", "|",
 					"outdent", "indent", "|",
-					"link", "blockquote", "uploadImage", "insertTable", "mediaEmbed", "|",
+					"uploadImage", "link", "blockquote", "|",
 					"undo", "redo"
 				]
 			},
