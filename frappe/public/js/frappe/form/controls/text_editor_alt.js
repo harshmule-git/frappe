@@ -30,8 +30,8 @@ frappe.ui.form.ControlTextEditorAlt = frappe.ui.form.ControlCode.extend({
 	},
 
 	bind_events() {
-		this.ckeditor.model.document.on('change:data', frappe.utils.debounce((delta, oldDelta, source) => {
-			if (!this.is_ckeditor_dirty(source)) return;
+		this.ckeditor.model.document.on('change:data', frappe.utils.debounce(() => {
+			if (!this.is_ckeditor_dirty()) return;
 
 			const input_value = this.get_input_value();
 			this.parse_validate_and_set_in_model(input_value);
@@ -40,8 +40,7 @@ frappe.ui.form.ControlTextEditorAlt = frappe.ui.form.ControlCode.extend({
 		this.ckeditor.plugins.get("FileRepository").createUploadAdapter = loader => new Adapter(loader);
 	},
 
-	is_ckeditor_dirty(source) {
-		if (source === 'api') return false;
+	is_ckeditor_dirty() {
 		let input_value = this.get_input_value();
 		return this.value !== input_value;
 	},
