@@ -35,7 +35,7 @@ frappe.ui.form.ControlTextEditorAlt = frappe.ui.form.ControlCode.extend({
 			if (!me.is_ckeditor_dirty()) return;
 
 			frappe.call({
-				method: "frappe.utils.html_utils.format_html",
+				method: "frappe.utils.html_formatter.format_html",
 				args: {
 					html: me.get_input_value()
 				},
