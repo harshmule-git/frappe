@@ -1,4 +1,4 @@
-import Adapter from "./ckeditor-plugins/Base64UploadAdapter";
+import Base64UploadAdapter from "./ckeditor-plugins/Base64UploadAdapter";
 
 frappe.ui.form.ControlTextEditorAlt = frappe.ui.form.ControlCode.extend({
 	make_wrapper() {
@@ -46,7 +46,7 @@ frappe.ui.form.ControlTextEditorAlt = frappe.ui.form.ControlCode.extend({
 			});
 		}, 300));
 
-		me.ckeditor.plugins.get("FileRepository").createUploadAdapter = loader => new Adapter(loader);
+		me.ckeditor.plugins.get("FileRepository").createUploadAdapter = loader => new Base64UploadAdapter(loader);
 	},
 
 	is_ckeditor_dirty() {

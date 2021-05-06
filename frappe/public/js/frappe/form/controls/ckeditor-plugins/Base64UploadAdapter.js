@@ -4,7 +4,7 @@
  * @private
  * @implements module:upload/filerepository~UploadAdapter
  */
-export default class Adapter {
+export default class Base64UploadAdapter {
 	/**
 	 * Creates a new adapter instance.
 	 *
