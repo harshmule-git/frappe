@@ -14,6 +14,10 @@ frappe.ui.form.ControlDynamicLink = frappe.ui.form.ControlLink.extend({
 			if (cur_list && cur_list.filter_area) {
 				// for list page
 				input = cur_list.filter_area.standard_filters_wrapper.find(selector);
+				if (!input.val()){
+					var msg = `Please Select ${this.df.options}`
+					frappe.msgprint(msg)
+				}
 			}
 			if (cur_page) {
 				input = $(cur_page.page).find(selector);
