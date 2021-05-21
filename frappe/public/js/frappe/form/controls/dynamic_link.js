@@ -15,8 +15,7 @@ frappe.ui.form.ControlDynamicLink = frappe.ui.form.ControlLink.extend({
 				// for list page
 				input = cur_list.filter_area.standard_filters_wrapper.find(selector);
 				if (!input.val()){
-					var msg = `Please select '${input[0]['placeholder']}' before selecting ${this.input.placeholder}`
-					frappe.msgprint(msg)
+					frappe.msgprint(__(`Please select '${input[0]['placeholder']}' before selecting ${this.input.placeholder}`));
 				}
 			}
 			if (cur_page) {
