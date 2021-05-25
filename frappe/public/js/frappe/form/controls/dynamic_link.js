@@ -16,7 +16,7 @@ frappe.ui.form.ControlDynamicLink = frappe.ui.form.ControlLink.extend({
 				input = cur_list.filter_area.standard_filters_wrapper.find(selector);
 				if (!input.val()){
 					let label = frappe.meta.get_label(this.df.doctype, this.df.options)
-					frappe.msgprint(__(`Please select '${label}' before selecting ${this.df.label}`));
+					frappe.msgprint(__(`Please select <b>${label}</b> before selecting <b>${this.df.label}</b>`));
 				}
 			}
 			if (cur_page) {
