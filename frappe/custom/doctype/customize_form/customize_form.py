@@ -35,7 +35,9 @@ doctype_properties = {
 	'show_title_field_in_link': 'Check',
 	'send_me_a_copy': 'Check',
 	'send_read_receipt': 'Check',
-	'attach_document_print': 'Check'
+	'attach_document_print': 'Check',
+	'file_autoname': 'Data',
+	'autoname': 'Data'
 }
 
 docfield_properties = {
@@ -77,7 +79,7 @@ docfield_properties = {
 }
 
 allowed_fieldtype_change = (('Currency', 'Float', 'Percent'), ('Small Text', 'Data'),
-	('Text', 'Data'), ('Text', 'Text Editor', 'Code', 'Signature', 'HTML Editor'), ('Data', 'Select'),
+	('Text', 'Data'), ('Text', 'Text Editor', 'Text Editor Alt', 'Code', 'Signature', 'HTML Editor'), ('Data', 'Select'),
 	('Text', 'Small Text'), ('Text', 'Data', 'Barcode'), ('Code', 'Geolocation'), ('Table', 'Table MultiSelect'))
 
 allowed_fieldtype_for_options_change = ('Read Only', 'HTML', 'Select', 'Data')
