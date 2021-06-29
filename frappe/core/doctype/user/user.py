@@ -6,7 +6,7 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import cint, flt, has_gravatar, format_datetime, now_datetime, get_formatted_email, today
 from frappe import throw, msgprint, _
-from frappe.utils.password import update_password as _update_password
+from frappe.utils.password import update_password as _update_password, check_password
 from frappe.desk.notifications import clear_notifications
 from frappe.desk.doctype.notification_settings.notification_settings import create_notification_settings
 from frappe.utils.user import get_system_managers
@@ -97,7 +97,8 @@ class User(Document):
 		self.share_with_self()
 		clear_notifications(user=self.name)
 		frappe.clear_cache(user=self.name)
-		self.send_password_notification(self.__new_password)
+		if not self.flags.email_sent:
+			self.send_password_notification(self.__new_password)
 		create_contact(self, ignore_mandatory=True)
 		if self.name not in ('Administrator', 'Guest') and not self.user_image:
 			frappe.enqueue('frappe.core.doctype.user.user.update_gravatar', name=self.name)
@@ -511,6 +512,27 @@ class User(Document):
 			return
 
 		return [i.strip() for i in self.restrict_ip.split(",")]
+
+	@classmethod
+	def find_by_credentials(cls, user_name, password, validate_password=True):
+		"""Find the user by credentials.
+		"""
+		login_with_mobile = cint(frappe.db.get_value("System Settings", "System Settings", "allow_login_using_mobile_number"))
+		filter = {"mobile_no": user_name} if login_with_mobile else {"name": user_name}
+
+		user = frappe.db.get_value("User", filters=filter, fieldname=['name', 'enabled'], as_dict=True) or {}
+		if not user:
+			return
+
+		user['is_authenticated'] = True
+		if validate_password:
+			try:
+				check_password(user_name, password)
+			except frappe.AuthenticationError:
+				user['is_authenticated'] = False
+
+		return user
+
 
 @frappe.whitelist()
 def get_timezones():
