@@ -11,7 +11,12 @@ def savedocs(doc, action):
 	"""save / submit / update doclist"""
 	try:
 		doc = json.loads(doc)
+
 		__unsaved_attachments = doc.pop("__unsaved_attachments", [])
+		__rollover_attachments = []
+		if doc.get("__rollover_attachments") and doc.get("__rollover_attachments").get("fileid"):
+			__rollover_attachments = doc.get("__rollover_attachments").get("fileid")
+			doc.pop("__rollover_attachments")
 		doc = frappe.get_doc(doc)
 		set_local_name(doc)
 
@@ -33,6 +38,7 @@ def savedocs(doc, action):
 		save_attachments(doc, __unsaved_attachments)
 		doc.load_from_db()
 		send_updated_docs(doc)
+		attach_rollover_attachments(doc, __rollover_attachments)
 	except Exception:
 		frappe.errprint(frappe.utils.get_traceback())
 		raise
@@ -86,3 +92,11 @@ def save_attachments(doc, __unsaved_attachments):
 			is_private=attachment.get("attachment", {}).get("is_private"),
 			decode_base64=True
 		)
+
+def attach_rollover_attachments(doc, attachments):
+	for attachment in attachments:
+		filedoc = frappe.get_doc("File", attachment)
+		new_filedoc = frappe.copy_doc(filedoc, ignore_no_copy=True)
+		new_filedoc.attached_to_doctype = doc.doctype
+		new_filedoc.attached_to_name = doc.name
+		new_filedoc.save(ignore_permissions=True)
